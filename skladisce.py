@@ -1,5 +1,5 @@
 class Skladisce:
-    def __init__(self, boxes,p, n):
+    def __init__(self, boxes, p, n):
         self.boxes = boxes
         self.p = p-1
         self.n = n-1
