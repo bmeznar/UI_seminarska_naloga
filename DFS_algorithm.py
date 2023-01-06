@@ -1,10 +1,16 @@
 from skladisce import Skladisce
 from Node import Node
+import copy
+import sys
+sys.setrecursionlimit(10**6)
 
 P = 3   #št. stolpcev v skladišču
 N = 3   #višina skladišča
+arr = [ [' ',' ',' '],
+        ['B','E',' '],
+        ['A','C','D']]
 
-skladisce_1 = Skladisce([[' ',' ',' '],[' ',' ',' '],['A','B','C']], P, N)
+skladisce_1 = Skladisce(copy.deepcopy(arr), P, N)
 
 
 stack_indexes = list(range(0, P, 1))
@@ -23,7 +29,8 @@ possible_moves = all_options()
 possible_moves.insert(0, (0,0))
 
 
-depth = 5
+depth = 3
+
 def build_graph(depth, index):
     global first_node
     if depth == 0:
@@ -32,8 +39,10 @@ def build_graph(depth, index):
     return Node(possible_moves[index], depth, children)
 
 
-final = Skladisce([['A',' ',' '],['C',' ',' '],['B',' ',' ']], P, N)
-out = skladisce_1
+final = Skladisce([[' ','B',' '],
+                   [' ','A',' ']], P, N)
+
+out = Skladisce(copy.deepcopy(arr), P, N)
 
 fastest_steps = -1
 current_steps = 0
@@ -43,47 +52,33 @@ current_moves = []
 visited = []    #obiskani nodi za trenutno rekurzijo
 finished_visited = []   #obiskani nodi koncanih obhodov
 
-def dfs_algorithm(visited, finished_visited, node):
-    global fastest_steps
-    global current_steps
-    global fastest_moves
-    global current_moves
 
-    visited.append(node)
+def dfs_algorithm(visited, node, out):
+    global current_steps, current_moves, fastest_steps, fastest_moves
 
     for child in node.children:
-
-        if child not in visited and child not in finished_visited:
-            move_from = child.value[0]
-            move_to = child.value[1]
-            out.prestavi(move_from, move_to)
-            current_moves.append((move_from, move_to))
+        if child not in visited:
+            out.prestavi(child.value[0], child.value[1])
             current_steps += 1
-
-            if current_steps > fastest_steps and fastest_steps != -1:
-                visited.clear()
-                finished_visited.append(child)
-                current_steps = 0
-                current_moves = []
-                dfs_algorithm(visited, finished_visited, graph)
-
-            elif out.boxes == final.boxes:
-                visited.clear()
-                finished_visited.append(child)
-                fastest_moves = current_moves
-                fastest_steps = current_steps
-                current_steps = 0
-                current_moves = []
-                dfs_algorithm(visited, finished_visited, graph)
-
+            current_moves.append(child.value)
+            if out.boxes == final.boxes:
+                if current_steps < fastest_steps or fastest_steps == -1:
+                    fastest_steps = current_steps
+                    fastest_moves = current_moves
             else:
-                dfs_algorithm(visited, finished_visited, child)
-    finished_visited.append(node)
-    #return visited
+                dfs_algorithm(visited, child, out)
+            break
 
+    if node not in visited:
+        visited.append(node)
+        if graph not in visited:
+            out = Skladisce(copy.deepcopy(arr), P, N)
+            current_steps = 0
+            current_moves = []
+            dfs_algorithm(visited, graph, out)
 
 
 
 graph = build_graph(depth, 0)
-dfs_algorithm(visited, finished_visited, graph)
+dfs_algorithm(visited, graph, out)
 print(fastest_moves)
