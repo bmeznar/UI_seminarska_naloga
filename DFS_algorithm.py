@@ -1,0 +1,2 @@
+from skladisce import Skladisce
+
