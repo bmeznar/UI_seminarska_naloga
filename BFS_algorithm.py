@@ -58,43 +58,22 @@ visited = []    #obiskani nodi za trenutno rekurzijo
 finished_visited = []   #obiskani nodi koncanih obhodov
 
 #fastest node = Node()
-def dfs_algorithm(visited, graph, node):
-    if node not in visited:
-        visited.append(node)
-        if node.boxes == final.boxes:
-            fastest_node = node
-            break
-        for children in node.children:
-            dfs_algorithm(visited, graph, children)
+queue = []
+def bfs_algorithm(visited, graph, node):
+  visited.append(node)
+  queue.append(node)
 
-# def dfs_algorithm(visited, node, out):
-#     global current_steps, current_moves, fastest_steps, fastest_moves
-#
-#     for child in node.children:
-#         if child not in visited:
-#             out.prestavi(child.value[0], child.value[1])
-#             current_steps += 1
-#             current_moves.append(child.value)
-#             if out.boxes == final.boxes:
-#                 if current_steps < fastest_steps or fastest_steps == -1:
-#                     fastest_steps = current_steps
-#                     fastest_moves = current_moves
-#             else:
-#                 if current_steps < fastest_steps or fastest_steps == -1:
-#                     dfs_algorithm(visited, child, out)
-#             break
-#
-#     if node not in visited:
-#         visited.append(node)
-#         if graph not in visited:
-#             out = Skladisce(copy.deepcopy(arr), P, N)
-#             current_steps = 0
-#             current_moves = []
-#             dfs_algorithm(visited, graph, out)
+  while queue:
+    m = queue.pop(0)
+
+    for neighbour in graph[m]:
+      if neighbour not in visited:
+        visited.append(neighbour)
+        queue.append(neighbour)
+
 
 
 
 graph = build_graph(depth, 0, [], out)
-#dfs_algorithm(visited, graph, out)
-#print(fastest_moves)
+#bfs_algorithm(visited, graph, out)
 
