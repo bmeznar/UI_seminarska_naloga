@@ -6,6 +6,7 @@ class Skladisce:
 
     def prestavi(self, p, r):
         if p <= self.p or r <= self.p :
+
             i = 0
             box = ' '
             while self.boxes[i][p] == ' ':
@@ -23,11 +24,14 @@ class Skladisce:
                 j -= 1
                 if j >= 0:
                     self.boxes[j][r] = box
+                    return 0
                 else:
                     self.boxes[i][p] = box
-                    print("Stack is already full")
+                    #print("Stack is already full")
+                    return 1
         else:
-            print("Wrong indexes")
+            #print("Wrong indexes")
+            return 1
 
     def print(self):
         for height in self.boxes:

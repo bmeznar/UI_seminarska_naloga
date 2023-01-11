@@ -3,4 +3,5 @@ class Node:
         self.depth = depth
         self.value = value
         self.boxes = boxes
+        self.current_moves = current_moves
         self.children = child

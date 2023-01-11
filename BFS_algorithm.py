@@ -30,17 +30,19 @@ possible_moves = all_options()
 possible_moves.insert(0, (0,0))
 
 
-depth = 4
+depth = 3
 
 
 def build_graph(depth, index, steps, current_position):
     global first_node
     if depth == 0:
-        return Node(possible_moves[index], current_position.append(node.value), steps.append(possible_moves[index]))
+        premik = possible_moves[index]
+        return Node(premik, current_position.prestavi(premik[0], premik[1]), steps.append(premik))
     #children = [build_graph(depth - 1, i) for i in range(1, len(possible_moves))]
     children = []
     for i in range(1, len(possible_moves)):
-        children.append(build_graph(depth-1, i, steps.append(possible_moves[i]), out.prestavi(possible_moves[i][0], possible_moves[i][1])))
+        premik = possible_moves[i]
+        children.append(build_graph(depth-1, i, steps.append(premik), current_position.prestavi(premik[0], premik[1])))
     #return Node(possible_moves[index], depth, children)
 
 
@@ -75,5 +77,6 @@ def bfs_algorithm(visited, graph, node):
 
 
 graph = build_graph(depth, 0, [], out)
+#print(graph.value)
 #bfs_algorithm(visited, graph, out)
 
