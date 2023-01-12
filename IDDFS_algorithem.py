@@ -64,17 +64,19 @@ def build_graph(depth, index, steps, current_position):
 
 fastest_node = None
 visited = []
+end = False
 nodecount = 0
 enddepth = 0
 
 def iddfs_algorithm(visited, node, depthLimit):
-    global fastest_node, nodecount
+    global fastest_node, nodecount, end
     nodecount += 1
     if node not in visited:
         visited.append(node)
     if node.boxes == final.boxes:
         if fastest_node == None or len(node.current_moves) < len(fastest_node.current_moves):
             fastest_node = node
+        end = True
         return True
     if depthLimit <= 0:
         return False
@@ -84,11 +86,13 @@ def iddfs_algorithm(visited, node, depthLimit):
     return False
 
 def iddfsgen(visited, currNode, maxDepth):
-    global enddepth
+    global enddepth, end
 
     for x in range(P * N):
-        enddepth = x
         iddfs_algorithm(visited, currNode, x)
+        if end:
+            enddepth = x
+            return
 
 
 
