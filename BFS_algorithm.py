@@ -2,17 +2,15 @@ from skladisce import Skladisce
 from Node import Node
 import copy
 
-P = 4   #št. stolpcev v skladišču
-N = 4   #višina skladišča
-arr = [ [' ',' ',' ',' '],
-        [' ',' ',' ',' '],
-        ['E','F',' ',' '],
-        ['A','C','D','B'] ]
+P = 3   #št. stolpcev v skladišču
+N = 3   #višina skladišča
+arr = [ [' ',' ',' '],
+        [' ',' ',' '],
+        ['A','B','C'] ]
 
-final = Skladisce([ [' ',' ',' ',' '],
-                    [' ',' ',' ',' '],
-                    ['D','E',' ','C'],
-                    ['B','A',' ','F'] ], P, N)
+final = Skladisce([ ['A',' ',' '],
+                    ['C',' ',' '],
+                    ['B',' ',' '] ], P, N)
 
 out = Skladisce(copy.deepcopy(arr), P, N)
 
@@ -21,8 +19,12 @@ skladisce_1 = Skladisce(copy.deepcopy(arr), P, N)
 
 stack_indexes = list(range(0, P, 1))
 
-#node_index = 0
 out = Skladisce(copy.deepcopy(arr), P, N)
+
+preiskana_vozlisca = 0
+preiskana_globina = 0
+stevilo_vseh_vozlisc = 0
+
 
 def all_options():
     nodes = []
@@ -40,10 +42,13 @@ depth = P * N
 
 def build_graph(depth, index, steps, current_position):
 
+    global stevilo_vseh_vozlisc
+
     if depth == 0:
         premik = possible_moves[index]
         pomozni_koraki = steps
         pomozno_skladisce = copy.deepcopy(current_position)
+        stevilo_vseh_vozlisc += 1
         return Node(premik, pomozno_skladisce.boxes, pomozni_koraki)
 
     children = []
@@ -65,6 +70,7 @@ def build_graph(depth, index, steps, current_position):
     premik = possible_moves[index]
     pomozni_koraki = steps
     pomozno_skladisce = copy.deepcopy(current_position)
+    stevilo_vseh_vozlisc += 1
     return Node(premik, pomozno_skladisce.boxes, pomozni_koraki, depth, children)
 
 
@@ -73,8 +79,10 @@ fastest_node = None
 queue = []
 visited = []
 def bfs_algorithm(visited, node):
-    global fastest_node
+    global fastest_node, preiskana_vozlisca, preiskana_globina
+
     visited.append(node)
+    preiskana_vozlisca += 1
     queue.append(node)
 
     while queue:
@@ -82,10 +90,13 @@ def bfs_algorithm(visited, node):
 
         for children in m.children:
             if children not in visited:
+                if len(children.current_moves) > preiskana_globina:
+                    preiskana_globina = len(children.current_moves)
                 if children.boxes == final.boxes:
                     fastest_node = children
                     return
                 visited.append(children)
+                preiskana_vozlisca += 1
                 queue.append(children)
 
 
@@ -98,5 +109,6 @@ bfs_algorithm(visited, graph)
 print("Število potrebnih korakov: " + str(len(fastest_node.current_moves)))
 print(fastest_node.current_moves)
 
-
-
+print("Vsa vozlišča: " + str(stevilo_vseh_vozlisc))
+print("Število preiskanih vozlišč: " + str(preiskana_vozlisca))
+print("Največja preiskana globina: " + str(preiskana_globina))
