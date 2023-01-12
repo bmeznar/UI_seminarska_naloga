@@ -91,5 +91,5 @@ graph = build_graph(depth, 0, [], out)
 
 iddfsgen(visited, graph, P*N)
 
-#print("Število potrebnih korakov: " + len(fastest_node.current_moves))
+print("Število potrebnih korakov: " + str(len(fastest_node.current_moves)))
 print(fastest_node.current_moves)
