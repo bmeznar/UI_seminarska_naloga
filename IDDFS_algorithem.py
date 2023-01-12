@@ -36,7 +36,7 @@ def all_options():
 possible_moves = all_options()
 possible_moves.insert(0, (0,0))
 
-depth = 6
+depth = P * N
 
 def build_graph(depth, index, steps, current_position):
 
