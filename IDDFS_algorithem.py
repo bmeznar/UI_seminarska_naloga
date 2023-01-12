@@ -65,25 +65,31 @@ def build_graph(depth, index, steps, current_position):
 fastest_node = None
 visited = []
 
-def iddfs_algorithm(visited, node):
+def iddfs_algorithm(visited, node, depthLimit):
     global fastest_node
 
-    for x in range(P * N):
-        if node not in visited:
-            visited.append(node)
-            if node.boxes == final.boxes:
-                if fastest_node == None or len(node.current_moves) < len(fastest_node.current_moves):
-                    fastest_node = node
-                return 0
-            for children in node.children:
-                iddfs_algorithm(visited, children)
+    if node not in visited:
+        visited.append(node)
+    if node.boxes == final.boxes:
+        if fastest_node == None or len(node.current_moves) < len(fastest_node.current_moves):
+            fastest_node = node
+        return True
+    if depthLimit <= 0:
+        return False
+    for children in node.children:
+       if iddfs_algorithm(visited, children, depthLimit - 1):
+           return True
+    return False
 
+def iddfsgen(visited, currNode, maxDepth):
+    for x in range(P * N):
+        iddfs_algorithm(visited, currNode, x)
 
 
 
 graph = build_graph(depth, 0, [], out)
 
-iddfs_algorithm(visited, graph)
+iddfsgen(visited, graph, P*N)
 
-print("Število potrebnih korakov: " + len(fastest_node.current_moves))
+#print("Število potrebnih korakov: " + len(fastest_node.current_moves))
 print(fastest_node.current_moves)
