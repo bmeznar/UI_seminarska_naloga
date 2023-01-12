@@ -85,5 +85,5 @@ graph = build_graph(depth, 0, [], out)
 
 iddfs_algorithm(visited, graph)
 
+print("Število potrebnih korakov: " + len(fastest_node.current_moves))
 print(fastest_node.current_moves)
-print(fastest_node.boxes)
