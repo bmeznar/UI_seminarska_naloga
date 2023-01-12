@@ -4,15 +4,17 @@ from skladisce import Skladisce
 from Node import Node
 import copy
 
-P = 3   #št. stolpcev v skladišču
-N = 3   #višina skladišča
-arr = [ [' ',' ',' '],
-        [' ',' ',' '],
-        ['A','B','C'] ]
+P = 4   #št. stolpcev v skladišču
+N = 4   #višina skladišča
+arr = [ [' ',' ',' ',' '],
+        [' ',' ',' ',' '],
+        ['E','F',' ',' '],
+        ['A','C','D','B'] ]
 
-final = Skladisce([ ['A',' ',' '],
-                    ['C',' ',' '],
-                    ['B',' ',' '] ], P, N)
+final = Skladisce([ [' ',' ',' ',' '],
+                    [' ',' ',' ',' '],
+                    ['D','E',' ','C'],
+                    ['B','A',' ','F'] ], P, N)
 
 out = Skladisce(copy.deepcopy(arr), P, N)
 
@@ -51,10 +53,17 @@ def build_graph(depth, index, steps, current_position):
         premik = possible_moves[i]
         pomozno_skladisce = copy.deepcopy(current_position)
         mozen_premik = pomozno_skladisce.prestavi(premik[0], premik[1])
-        if mozen_premik == 0 and pomozno_skladisce.boxes != current_position.boxes :
-            pomozni_koraki = copy.deepcopy(steps)
-            pomozni_koraki.append(premik)
-            children.append(build_graph(depth-1, i, pomozni_koraki, pomozno_skladisce))
+        if len(steps) > 0:
+            if mozen_premik == 0 and (premik[1], premik[0]) != steps[
+                -1] and pomozno_skladisce.boxes != current_position.boxes:
+                pomozni_koraki = copy.deepcopy(steps)
+                pomozni_koraki.append(premik)
+                children.append(build_graph(depth - 1, i, pomozni_koraki, pomozno_skladisce))
+        else:
+            if mozen_premik == 0 and pomozno_skladisce.boxes != current_position.boxes:
+                pomozni_koraki = copy.deepcopy(steps)
+                pomozni_koraki.append(premik)
+                children.append(build_graph(depth - 1, i, pomozni_koraki, pomozno_skladisce))
 
     premik = possible_moves[index]
     pomozni_koraki = steps
@@ -82,8 +91,8 @@ def iddfs_algorithm(visited, node):
 
 
 graph = build_graph(depth, 0, [], out)
-
+print("graph built")
 iddfs_algorithm(visited, graph)
 
-print("Število potrebnih korakov: " + len(fastest_node.current_moves))
+print("Število potrebnih korakov: " + str(len(fastest_node.current_moves)))
 print(fastest_node.current_moves)
