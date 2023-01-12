@@ -40,13 +40,10 @@ depth = 6
 
 def build_graph(depth, index, steps, current_position):
 
-    premik = possible_moves[index]
-    pomozni_koraki = steps
-    pomozni_koraki.append(premik)
-    pomozno_skladisce = copy.deepcopy(current_position)
-    pomozno_skladisce.prestavi(premik[0], premik[1])
-
     if depth == 0:
+        premik = possible_moves[index]
+        pomozni_koraki = steps
+        pomozno_skladisce = copy.deepcopy(current_position)
         return Node(premik, pomozno_skladisce.boxes, pomozni_koraki)
 
     children = []
@@ -54,17 +51,19 @@ def build_graph(depth, index, steps, current_position):
         premik = possible_moves[i]
         pomozno_skladisce = copy.deepcopy(current_position)
         mozen_premik = pomozno_skladisce.prestavi(premik[0], premik[1])
-        #print(pomozno_skladisce.boxes)
-        #print(premik)
         if mozen_premik == 0 and pomozno_skladisce.boxes != current_position.boxes :
             pomozni_koraki = copy.deepcopy(steps)
             pomozni_koraki.append(premik)
             children.append(build_graph(depth-1, i, pomozni_koraki, pomozno_skladisce))
 
+    premik = possible_moves[index]
+    pomozni_koraki = steps
+    pomozno_skladisce = copy.deepcopy(current_position)
     return Node(premik, pomozno_skladisce.boxes, pomozni_koraki, depth, children)
 
 
 fastest_node = None
+visited = []
 
 def dfs_algorithm(visited, node):
     global fastest_node
@@ -82,12 +81,8 @@ def dfs_algorithm(visited, node):
 
 graph = build_graph(depth, 0, [], out)
 
-visited = []
 dfs_algorithm(visited, graph)
-#skladisce_1.prestavi(0,1)
-#skladisce_1.print()
 
 print(fastest_node.current_moves)
 print(fastest_node.boxes)
-#print(fastest_moves)
 

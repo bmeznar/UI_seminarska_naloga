@@ -1,5 +1,3 @@
-from collections import deque
-
 from skladisce import Skladisce
 from Node import Node
 import copy
@@ -7,15 +5,21 @@ import copy
 P = 3   #št. stolpcev v skladišču
 N = 3   #višina skladišča
 arr = [ [' ',' ',' '],
-        ['B','E',' '],
-        ['A','C','D']]
+        [' ',' ',' '],
+        ['A','B','C'] ]
+
+final = Skladisce([ ['A',' ',' '],
+                    ['C',' ',' '],
+                    ['B',' ',' '] ], P, N)
+
+out = Skladisce(copy.deepcopy(arr), P, N)
 
 skladisce_1 = Skladisce(copy.deepcopy(arr), P, N)
 
 
 stack_indexes = list(range(0, P, 1))
 
-node_index = 0
+#node_index = 0
 out = Skladisce(copy.deepcopy(arr), P, N)
 
 def all_options():
@@ -26,57 +30,65 @@ def all_options():
                 nodes.append((stack_indexes[i], stack_indexes[j]))
     return nodes
 
+
 possible_moves = all_options()
 possible_moves.insert(0, (0,0))
 
-
-depth = 3
-
+depth = 6
 
 def build_graph(depth, index, steps, current_position):
-    global first_node
+
     if depth == 0:
         premik = possible_moves[index]
-        return Node(premik, current_position.prestavi(premik[0], premik[1]), steps.append(premik))
-    #children = [build_graph(depth - 1, i) for i in range(1, len(possible_moves))]
+        pomozni_koraki = steps
+        pomozno_skladisce = copy.deepcopy(current_position)
+        return Node(premik, pomozno_skladisce.boxes, pomozni_koraki)
+
     children = []
     for i in range(1, len(possible_moves)):
         premik = possible_moves[i]
-        children.append(build_graph(depth-1, i, steps.append(premik), current_position.prestavi(premik[0], premik[1])))
-    #return Node(possible_moves[index], depth, children)
+        pomozno_skladisce = copy.deepcopy(current_position)
+        mozen_premik = pomozno_skladisce.prestavi(premik[0], premik[1])
+        if mozen_premik == 0 and pomozno_skladisce.boxes != current_position.boxes :
+            pomozni_koraki = copy.deepcopy(steps)
+            pomozni_koraki.append(premik)
+            children.append(build_graph(depth-1, i, pomozni_koraki, pomozno_skladisce))
+
+    premik = possible_moves[index]
+    pomozni_koraki = steps
+    pomozno_skladisce = copy.deepcopy(current_position)
+    return Node(premik, pomozno_skladisce.boxes, pomozni_koraki, depth, children)
 
 
-final = Skladisce([[' ','B',' '],
-                   [' ','A',' ']], P, N)
+fastest_node = None
 
-out = Skladisce(copy.deepcopy(arr), P, N)
-
-fastest_steps = -1
-current_steps = 0
-fastest_moves = []
-current_moves = []
-
-visited = []    #obiskani nodi za trenutno rekurzijo
-finished_visited = []   #obiskani nodi koncanih obhodov
-
-#fastest node = Node()
 queue = []
-def bfs_algorithm(visited, graph, node):
-  visited.append(node)
-  queue.append(node)
+visited = []
+def bfs_algorithm(visited, node):
+    global fastest_node
+    visited.append(node)
+    queue.append(node)
 
-  while queue:
-    m = queue.pop(0)
+    while queue:
+        m = queue.pop(0)
 
-    for neighbour in graph[m]:
-      if neighbour not in visited:
-        visited.append(neighbour)
-        queue.append(neighbour)
+        for children in m.children:
+            if children not in visited:
+                if children.boxes == final.boxes:
+                    fastest_node = children
+                    return
+                visited.append(children)
+                queue.append(children)
 
 
 
 
 graph = build_graph(depth, 0, [], out)
-#print(graph.value)
-#bfs_algorithm(visited, graph, out)
+
+bfs_algorithm(visited, graph)
+
+print(fastest_node.current_moves)
+print(fastest_node.boxes)
+
+
 
